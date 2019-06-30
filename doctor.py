@@ -42,8 +42,13 @@ num_drugs = len(np.unique(y))
 
 # create the model
 model = Sequential()
-model.add(Dense(32, input_shape=(num_foods,)))
+model.add(Dense(32, input_shape=(num_foods,), activation='relu'))
+model.add(Dropout(0.5)) # prevent overfitting
+model.add(Dense(num_drugs, activation='softmax'))
 
+# compile
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
+# 
 
 
