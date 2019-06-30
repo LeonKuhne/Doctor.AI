@@ -1,9 +1,14 @@
 import pandas as pd
 import numpy as np
+import time
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.utils import to_categorical
+from keras.callbacks import TensorBoard
+
+# setup tensorboard
+tensorboard = TensorBoard(log_dir=f"logs/doctor-{int(time.time())}")
 
 # read in data
 medical_data = pd.read_sas("data/RXQ_RX_I.xpt")
@@ -27,9 +32,6 @@ drug_ids = data.groupby('RXDDRUG').ngroup()
 x = food_ids.values
 y = drug_ids.values
 
-print(x)
-print(y)
-
 # format y
 y_matrix = to_categorical(y)
 
@@ -42,13 +44,17 @@ num_drugs = len(np.unique(y))
 
 # create the model
 model = Sequential()
-model.add(Dense(32, input_shape=(num_foods,), activation='relu'))
+model.add(Dense(32, input_shape=(1,), activation='relu'))
 model.add(Dropout(0.5)) # prevent overfitting
 model.add(Dense(num_drugs, activation='softmax'))
 
 # compile
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# 
+# train
+model.fit(x_train, y_train, epochs=20, validation_data=(x_test, y_test), callbacks=[tensorboard])
+
+# save
+model.save("doctor.model")
 
 
