@@ -20,7 +20,7 @@ MODEL_NAME = "doctor.model"
 model = load_model(MODEL_NAME)
 
 
-for x in range(90):
+for x in range(99):
     prediction = model.predict(np.asarray([x]))
-    print(prediction)
+    print(f"{x}: {prediction}")
 
